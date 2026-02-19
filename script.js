@@ -1139,6 +1139,62 @@ document.addEventListener("DOMContentLoaded", () => {
 
   window.goalPath = new GoalPathApp();
 
+  // ------------------------------
+// Ensure all buttons work (delegation) - add to your existing code
+// ------------------------------
+document.body.addEventListener("click", (e) => {
+  const target = e.target;
+
+  // Auth buttons
+  if (target.id === "login-btn") {
+    e.preventDefault();
+    window.goalPath?.loginEmail();
+  }
+
+  if (target.id === "signup-btn") {
+    e.preventDefault();
+    window.goalPath?.signupEmail();
+  }
+
+  if (target.id === "google-btn") {
+    e.preventDefault();
+    window.goalPath?.loginGoogle();
+  }
+
+  if (target.id === "reset-btn") {
+    e.preventDefault();
+    window.goalPath?.resetPassword();
+  }
+
+  if (target.id === "logout-btn") {
+    e.preventDefault();
+    window.goalPath?.logout();
+  }
+
+  // Core goal actions (already handled in renderGoals)
+  if (target.dataset.action) {
+    const id = target.dataset.id;
+    const action = target.dataset.action;
+
+    if (action === "done") {
+      const g = window.goalPath.goals.find((x) => x.id === id);
+      if (!g) return;
+
+      if (g.type === "habit") window.goalPath.markHabitDone(id);
+      else window.goalPath.openTargetPopup(id);
+    }
+
+    if (action === "inc") window.goalPath.openTargetPopup(id);
+    if (action === "edit") window.goalPath.openGoalModal(window.goalPath.goals.find((x) => x.id === id));
+    if (action === "calendar") window.goalPath.openCalendar(id);
+    if (action === "pin") window.goalPath.togglePin(id);
+    if (action === "archive") window.goalPath.archiveGoal(id);
+    if (action === "restore") window.goalPath.unarchiveGoal(id);
+    if (action === "freeze") window.goalPath.useFreezeToken(id);
+  }
+});
+
+
   // Type buttons
   document.querySelectorAll("[data-type]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -1203,3 +1259,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });  
 });
+
