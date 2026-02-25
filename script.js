@@ -1129,73 +1129,78 @@ class GoalPathApp {
 }
 
 // ------------------------------
-// Boot
+// Boot (FIXED - no duplicate listeners)
 // ------------------------------
 document.addEventListener("DOMContentLoaded", () => {
+
   // Force mobile-only message if needed
   if (window.innerWidth > 768) {
     $("desktop-warning")?.classList.remove("hidden");
   }
 
+  // Initialize app
   window.goalPath = new GoalPathApp();
 
   // ------------------------------
-// Ensure all buttons work (delegation) - add to your existing code
-// ------------------------------
-document.body.addEventListener("click", (e) => {
-  const target = e.target;
+  // Global Click Delegation (CLEAN)
+  // ------------------------------
+  document.body.addEventListener("click", (e) => {
+    const target = e.target;
 
-  // Auth buttons
-  if (target.id === "login-btn") {
-    e.preventDefault();
-    window.goalPath?.loginEmail();
-  }
-
-  if (target.id === "signup-btn") {
-    e.preventDefault();
-    window.goalPath?.signupEmail();
-  }
-
-  if (target.id === "google-btn") {
-    e.preventDefault();
-    window.goalPath?.loginGoogle();
-  }
-
-  if (target.id === "reset-btn") {
-    e.preventDefault();
-    window.goalPath?.resetPassword();
-  }
-
-  if (target.id === "logout-btn") {
-    e.preventDefault();
-    window.goalPath?.logout();
-  }
-
-  // Core goal actions (already handled in renderGoals)
-  if (target.dataset.action) {
-    const id = target.dataset.id;
-    const action = target.dataset.action;
-
-    if (action === "done") {
-      const g = window.goalPath.goals.find((x) => x.id === id);
-      if (!g) return;
-
-      if (g.type === "habit") window.goalPath.markHabitDone(id);
-      else window.goalPath.openTargetPopup(id);
+    // ---- AUTH BUTTONS ----
+    if (target.id === "login-btn") {
+      e.preventDefault();
+      window.goalPath?.loginEmail();
     }
 
-    if (action === "inc") window.goalPath.openTargetPopup(id);
-    if (action === "edit") window.goalPath.openGoalModal(window.goalPath.goals.find((x) => x.id === id));
-    if (action === "calendar") window.goalPath.openCalendar(id);
-    if (action === "pin") window.goalPath.togglePin(id);
-    if (action === "archive") window.goalPath.archiveGoal(id);
-    if (action === "restore") window.goalPath.unarchiveGoal(id);
-    if (action === "freeze") window.goalPath.useFreezeToken(id);
-  }
-});
+    if (target.id === "signup-btn") {
+      e.preventDefault();
+      window.goalPath?.signupEmail();
+    }
 
+    if (target.id === "google-btn") {
+      e.preventDefault();
+      window.goalPath?.loginGoogle();
+    }
 
-  // Type buttons
+    if (target.id === "reset-btn") {
+      e.preventDefault();
+      window.goalPath?.resetPassword();
+    }
+
+    if (target.id === "logout-btn") {
+      e.preventDefault();
+      window.goalPath?.logout();
+    }
+
+    // ---- GOAL ACTIONS ----
+    if (target.dataset.action) {
+      const id = target.dataset.id;
+      const action = target.dataset.action;
+
+      if (!window.goalPath) return;
+
+      if (action === "done") {
+        const g = window.goalPath.goals.find((x) => x.id === id);
+        if (!g) return;
+
+        if (g.type === "habit") window.goalPath.markHabitDone(id);
+        else window.goalPath.openTargetPopup(id);
+      }
+
+      if (action === "inc") window.goalPath.openTargetPopup(id);
+      if (action === "edit") window.goalPath.openGoalModal(window.goalPath.goals.find((x) => x.id === id));
+      if (action === "calendar") window.goalPath.openCalendar(id);
+      if (action === "pin") window.goalPath.togglePin(id);
+      if (action === "archive") window.goalPath.archiveGoal(id);
+      if (action === "restore") window.goalPath.unarchiveGoal(id);
+      if (action === "freeze") window.goalPath.useFreezeToken(id);
+    }
+  });
+
+  // ------------------------------
+  // Type Buttons
+  // ------------------------------
   document.querySelectorAll("[data-type]").forEach((btn) => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("[data-type]").forEach((b) => {
@@ -1208,55 +1213,14 @@ document.body.addEventListener("click", (e) => {
     });
   });
 
-  // Day toggles
+  // ------------------------------
+  // Day Toggles
+  // ------------------------------
   document.querySelectorAll("[data-day]").forEach((btn) => {
     btn.addEventListener("click", () => {
       btn.classList.toggle("bg-indigo-600");
       btn.classList.toggle("text-white");
     });
   });
-  // ------------------------------
-// Fix Login & Register buttons
-// ------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-    // Ensure buttons trigger the right functions
-    $("login-btn")?.addEventListener("click", (e) => {
-      e.preventDefault(); // prevent form submission
-      window.goalPath?.loginEmail();
-    });
-  
-    $("signup-btn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.goalPath?.signupEmail();
-    });
-  });
-  // ------------------------------
-// Fix all Auth buttons (Login, Signup, Google, Reset)
-// ------------------------------
-document.addEventListener("DOMContentLoaded", () => {
-    // Login (email/password)
-    $("login-btn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.goalPath?.loginEmail();
-    });
-  
-    // Signup (email/password)
-    $("signup-btn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.goalPath?.signupEmail();
-    });
-  
-    // Google login
-    $("google-btn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.goalPath?.loginGoogle();
-    });
-  
-    // Password reset
-    $("reset-btn")?.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.goalPath?.resetPassword();
-    });
-  });  
-});
 
+});
